@@ -31,9 +31,13 @@ You can also add something like the following to your `.bashrc`:
 
 ````
 function rfc() {
-  cd `raco fc $1`
+  cd `racket -l find-collection/run $1`
 }
 ````
+
+Note: using `racket -l` in the shell function is faster than calling
+the `raco` version of the script, but the latter is easier to
+remember when using it manually.
 
 ---
 
