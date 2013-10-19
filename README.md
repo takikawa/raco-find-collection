@@ -7,6 +7,9 @@ installed in Racket packages or core collections.
 Installation
 ------------
 
+Use one of:
+
+  * `raco pkg install raco-find-collection`
   * `raco pkg install git://github.com/takikawa/raco-find-collection`
   * `raco pkg install github://github.com/takikawa/raco-find-collection` (on Racket 5.3.6)
 
