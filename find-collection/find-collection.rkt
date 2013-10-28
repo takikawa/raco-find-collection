@@ -1,5 +1,7 @@
 #lang racket/base
 
+(require racket/path)
+
 (provide find-collection-dir)
 
 ;; Path-String -> (Option Path)
@@ -17,12 +19,20 @@
   (define file-path
     (and (path-string? base)
          (path-string? name)
-         (collection-file-path name base #:fail (λ (_) #f))))
+         (if (racket-extension? name)
+             (collection-file-path name base #:fail (λ (_) #f))
+             (collection-file-path (path-add-suffix name ".rkt")
+                                   base #:fail (λ (_) #f)))))
   (and file-path
        (file-exists? file-path)
        (let-values ([(collection-base _2 _3)
-                     (split-path (collection-file-path name base))])
+                     (split-path file-path)])
          collection-base)))
+
+;; check if the path has a Racket module extension
+(define (racket-extension? path)
+  (define ext (filename-extension path))
+  (and ext (equal? ext #"rkt")))
 
 (module+ test
   (require rackunit)

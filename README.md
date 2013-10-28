@@ -18,11 +18,9 @@ Usage
 
 Quick usage: `` cd `raco fc <collection-name>` ``
 
-The `<collection-name>` argument is the same as paths used
-for `require` for the most part. For example, `typed/racket`
-or `racket/dict`. If a module is just a file and not a
-directory, you may have to add `.rkt` at the end (like
-for `typed-racket/core.rkt`).
+The `<collection-name>` argument has the same format as collection
+paths used for `require`. For example, `typed/racket`, `racket/dict`, or
+`typed-racket/core`.
 
 If a collection can't be found, the command returns the
 current directory (for convenience in scripts that use `cd`).
