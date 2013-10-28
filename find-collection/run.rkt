@@ -9,7 +9,7 @@
    (cond [dir (displayln (path->string dir))]
          [else
           (displayln (path->string (current-directory)))
-          (error 'raco-find-collection
-                 "could not find the collection path ~v"
-                 collection-path)])))
+          (raise-user-error 'raco-find-collection
+                            "could not find the collection path ~v"
+                            collection-path)])))
 
