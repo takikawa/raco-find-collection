@@ -32,7 +32,7 @@
 ;; check if the path has a Racket module extension
 (define (racket-extension? path)
   (define ext (filename-extension path))
-  (and ext (equal? ext #"rkt")))
+  (and ext (bytes=? ext #"rkt")))
 
 (module+ test
   (require rackunit)
