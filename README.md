@@ -25,11 +25,20 @@ paths used for `require`. For example, `typed/racket`, `racket/dict`, or
 If a collection can't be found, the command returns the
 current directory (for convenience in scripts that use `cd`).
 
+If the `-i` flag is provided, the script will ask you to disambiguate
+if there are multiple collection paths that match the name that
+you provide.
+
 You can also add something like the following to your `.bashrc`:
 
 ````
 function rfc() {
   cd `racket -l find-collection/run $1`
+}
+
+# interactive version
+function rfci() {
+  cd `racket -l find-collection/run -i $1`
 }
 ````
 
