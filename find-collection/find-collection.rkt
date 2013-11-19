@@ -1,6 +1,7 @@
 #lang racket/base
 
-(require racket/path
+(require pkg/lib
+         racket/path
          (submod compiler/commands/test paths))
 
 (provide find-collection-dir)
@@ -10,7 +11,7 @@
 (define (find-collection-dir collection)
   (if (relative-path? collection)
       (append (find/file-path collection)
-              (collection-paths collection))
+              (sort (collection-paths collection) usefulness))
       null))
 
 ;; Path-String -> (Listof Path)
@@ -38,6 +39,22 @@
                          (split-path file-path)])
              (list collection-base)))
       null))
+
+;; comparison function that orders by "usefulness"
+(define (usefulness p1 p2)
+  (and ;; prefer `collects` paths
+       (path->pkg p2)
+       (or (and (not (path->pkg p1))
+                (path->pkg p2))
+           ;; prefer `-lib` packages otherwise
+           (and (from-lib-pkg? p1)
+                (not (from-lib-pkg? p2))))))
+
+;; Path-String -> Boolean
+;; test whether a given path comes from a "lib" package
+(define (from-lib-pkg? path)
+  (define pkg (path->pkg path))
+  (and pkg (regexp-match? #rx".*-lib$" pkg)))
 
 ;; check if the path has a Racket module extension
 (define (racket-extension? path)
