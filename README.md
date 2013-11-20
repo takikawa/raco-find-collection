@@ -2,7 +2,8 @@ raco-find-collection : a script for finding collections
 -------------------------------------------------------
 
 This script helps you find where a given collection is
-installed in Racket packages or core collections.
+installed in Racket packages or core collections. Requires
+Racket 6.0 or newer.
 
 Installation
 ------------
@@ -11,7 +12,6 @@ Use one of:
 
   * `raco pkg install raco-find-collection`
   * `raco pkg install git://github.com/takikawa/raco-find-collection`
-  * `raco pkg install github://github.com/takikawa/raco-find-collection` (on Racket 5.3.6)
 
 Usage
 -----
