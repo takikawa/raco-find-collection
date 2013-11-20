@@ -32,7 +32,7 @@
                 (member user# (range 0 (length choices))))
            (displayln (list-ref choices user#))]
           [else
-           (displayln (format "Invalid choice ~a, please choose again" user#)
+           (displayln (format "Invalid choice `~a', please choose again" line)
                       stderr)
            (loop)])))
 
