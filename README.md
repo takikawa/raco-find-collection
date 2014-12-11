@@ -1,9 +1,9 @@
 raco-find-collection : a script for finding collections
 -------------------------------------------------------
 
-This script helps you find where a given collection is
-installed in Racket packages or core collections. Requires
-Racket 6.0 or newer.
+This script helps you find collections or packages that
+you have installed in your copy of Racket.
+Requires Racket 6.0 or newer.
 
 Installation
 ------------
@@ -16,18 +16,20 @@ Use one of:
 Usage
 -----
 
-Quick usage: `` cd `raco fc <collection-name>` ``
+Quick usage: `` cd `raco fc <pkg-or-collection-name>` ``
 
-The `<collection-name>` argument has the same format as collection
-paths used for `require`. For example, `typed/racket`, `racket/dict`, or
+If you are looking for a collection, just use a collection path like
+those you would pass to `require`. For example, `typed/racket`, `racket/dict`, or
 `typed-racket/core`.
 
-If a collection can't be found, the command returns the
+Collection paths are prioritized over package paths if the name
+is ambiguous.
+
+If a collection or package can't be found, the command returns the
 current directory (for convenience in scripts that use `cd`).
 
 If the `-i` flag is provided, the script will ask you to disambiguate
-if there are multiple collection paths that match the name that
-you provide.
+if there are multiple paths that match the name that you provide.
 
 You can also add something like the following to your `.bashrc`:
 
