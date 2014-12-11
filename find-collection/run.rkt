@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require "find-collection.rkt"
+         pkg/lib
          racket/cmdline
          racket/list)
 
@@ -22,7 +23,7 @@
            (for/list ([(choice idx) (in-indexed (in-list choices))])
              (format "(~a) ~a~n" idx choice))))
   ;; these prompts ask the user via stderr, which is hacky
-  (displayln "Ambiguous collection path, please select one:" stderr)
+  (displayln "Ambiguous collection or pkg, please select one:" stderr)
   (display choices-string stderr)
   (flush-output)
   (let loop ()
@@ -42,11 +43,21 @@
    [("-i" "--interactive") "Ask when disambiguation is needed"
                            (interactive-mode #t)]
    #:args (collection-path)
-   (let ([dirs (find-collection-dir collection-path)])
+   (let* ([pkg-path (pkg-directory collection-path)]
+          [pkg (and pkg-path (path->string pkg-path))]
+          [dirs (find-collection-dir collection-path)])
      (cond [(and (pair? dirs) (not (interactive-mode)))
             (displayln (path->string (first dirs)))]
-           [(and (pair? dirs))
-            (select (map path->string dirs))]
+           [(and pkg (not (interactive-mode)))
+            (displayln pkg)]
+           [(or pkg (pair? dirs))
+            (define choices
+              (remove-duplicates
+               (append (map path->string dirs)
+                       (or (and pkg (list pkg)) null))))
+            (if (= (length choices) 1)
+                (displayln (car choices))
+                (select choices))]
            [else
             (raise-user-error 'raco-find-collection
                               "could not find the collection path ~v"
