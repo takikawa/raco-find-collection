@@ -43,23 +43,24 @@
    [("-i" "--interactive") "Ask when disambiguation is needed"
                            (interactive-mode #t)]
    #:args (collection-path)
-   (let* ([pkg-path (pkg-directory collection-path)]
-          [pkg (and pkg-path (path->string pkg-path))]
-          [dirs (find-collection-dir collection-path)])
+   (let ([dirs (find-collection-dir collection-path)])
      (cond [(and (pair? dirs) (not (interactive-mode)))
             (displayln (path->string (first dirs)))]
-           [(and pkg (not (interactive-mode)))
-            (displayln pkg)]
-           [(or pkg (pair? dirs))
-            (define choices
-              (remove-duplicates
-               (append (map path->string dirs)
-                       (or (and pkg (list pkg)) null))))
-            (if (= (length choices) 1)
-                (displayln (car choices))
-                (select choices))]
            [else
-            (raise-user-error 'raco-find-collection
-                              "could not find the collection path ~v"
-                              collection-path)]))))
+            (define pkg-path (pkg-directory collection-path))
+            (define pkg (and pkg-path (path->string pkg-path)))
+            (cond [(and pkg (not (interactive-mode)))
+                   (displayln pkg)]
+                  [(or pkg (pair? dirs))
+                   (define choices
+                     (remove-duplicates
+                      (append (map path->string dirs)
+                              (or (and pkg (list pkg)) null))))
+                   (if (= (length choices) 1)
+                       (displayln (car choices))
+                       (select choices))]
+                  [else
+                   (raise-user-error 'raco-find-collection
+                                     "could not find the collection path ~v"
+                                     collection-path)])]))))
 
