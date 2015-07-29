@@ -1,9 +1,10 @@
 #lang racket/base
 
 (require "find-collection.rkt"
-         pkg/lib
+         racket/lazy-require
          racket/cmdline
          racket/list)
+(lazy-require [pkg/lib (pkg-directory)])
 
 ;; a parameter that controls whether the user is asked
 ;; when the collection path needs disambiguation
