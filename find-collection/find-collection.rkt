@@ -1,7 +1,6 @@
 #lang racket/base
 
-(require pkg/lib
-         racket/path
+(require racket/path pkg/path
          (submod compiler/commands/test paths))
 
 (provide find-collection-dir)
@@ -11,7 +10,8 @@
 (define (find-collection-dir collection)
   (if (relative-path? collection)
       (append (find/file-path collection)
-              (sort (collection-paths collection) usefulness))
+              (let ([v (collection-paths collection)])
+                (sort v < #:key score #:cache-keys? #t)))
       null))
 
 ;; Path-String -> (Listof Path)
@@ -39,6 +39,14 @@
                          (split-path file-path)])
              (list collection-base)))
       null))
+
+(define cache (make-hash))
+
+(define (score p)
+  (define pkg (path->pkg p #:cache cache))
+  (cond [(not pkg) -1]
+        [(regexp-match? #rx".*-lib$" pkg)    0]
+        [else                 1]))
 
 ;; comparison function that orders by "usefulness"
 (define (usefulness p1 p2)
