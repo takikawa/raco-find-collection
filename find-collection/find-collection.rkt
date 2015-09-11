@@ -39,25 +39,11 @@
 
 (define (score p)
   (define pkg (path->pkg p #:cache cache))
-  (cond [(not pkg) -1]
+  (cond ;; prefer `collects` paths
+        [(not pkg) -1]
+        ;; prefer `-lib` packages otherwise
         [(regexp-match? #rx".*-lib$" pkg)    0]
         [else                 1]))
-
-;; comparison function that orders by "usefulness"
-(define (usefulness p1 p2)
-  (and ;; prefer `collects` paths
-       (path->pkg p2)
-       (or (and (not (path->pkg p1))
-                (path->pkg p2))
-           ;; prefer `-lib` packages otherwise
-           (and (from-lib-pkg? p1)
-                (not (from-lib-pkg? p2))))))
-
-;; Path-String -> Boolean
-;; test whether a given path comes from a "lib" package
-(define (from-lib-pkg? path)
-  (define pkg (path->pkg path))
-  (and pkg (regexp-match? #rx".*-lib$" pkg)))
 
 ;; check if the path has a Racket module extension
 (define (racket-extension? path)
