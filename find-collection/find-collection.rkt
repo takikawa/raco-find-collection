@@ -28,11 +28,6 @@
              (collection-file-path name base #:fail (λ (_) #f))
              (collection-file-path (path-add-suffix name ".rkt")
                                    base #:fail (λ (_) #f)))))
-  (and file-path
-       (file-exists? file-path)
-       (let-values ([(collection-base _2 _3)
-                     (split-path file-path)])
-         collection-base))
   (or (and file-path
            (file-exists? file-path)
            (let-values ([(collection-base _2 _3)
