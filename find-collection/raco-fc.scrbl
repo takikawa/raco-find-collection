@@ -17,12 +17,12 @@ like the following in your @tt{.bashrc}:
 
 @verbatim|{
   function rfc() {
-    cd `racket -l find-collection/run $1`
+    cd `racket -l find-collection/run -- $@`
   }
 
   # interactive version
   function rfci() {
-    cd `racket -l find-collection/run -i $1`
+    cd `racket -l find-collection/run -- -i $@`
   }
 }|
 
