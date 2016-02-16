@@ -1,6 +1,8 @@
 raco-find-collection : a script for finding collections
 -------------------------------------------------------
 
+[![Scribble](https://img.shields.io/badge/Docs-Scribble-blue.svg)](http://docs.racket-lang.org/raco-fc/index.html)
+
 This script helps you find collections or packages that
 you have installed in your copy of Racket.
 Requires Racket 6.0 or newer.
