@@ -1,9 +1,11 @@
 #lang racket/base
 
 (require racket/path pkg/path
+         setup/getinfo
          (submod compiler/commands/test paths))
 
-(provide find-collection-dir)
+(provide find-collection-dir
+         raco-name->collection-path)
 
 ;; Path-String -> (Listof Path)
 ;; Return list of possible paths for collection
@@ -55,3 +57,23 @@
   (check-not-exn (λ () (find-collection-dir "/bin/bash")))
   (check-not-exn (λ () (find-collection-dir "raco-find-collection"))))
 
+;; output the collection path for a given raco command name
+(define (raco-name->collection-path name)
+  (define commands
+    (for/fold ([commands null])
+              ([p (in-list (find-relevant-directories '(raco-commands)))])
+      (append commands
+              ((get-info/full p) 'raco-commands))))
+  (define maybe-entry (assoc name commands))
+  (cond [(and maybe-entry
+              (not (null? maybe-entry))
+              (not (null? (cdr maybe-entry))))
+         (define collection (symbol->string (cadr maybe-entry)))
+         (fprintf (current-error-port)
+                  "collection name for `raco ~a`: ~a~n"
+                  name collection)
+         collection]
+        [else (raise-user-error
+               'raco-find-collection
+               "raco command ~v not found"
+               name)]))

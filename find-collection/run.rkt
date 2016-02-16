@@ -10,6 +10,9 @@
 ;; when the collection path needs disambiguation
 (define interactive-mode (make-parameter #f))
 
+;; sets whether to search for a raco command
+(define raco-mode (make-parameter #f))
+
 ;; print current directory (for use in scripts) and
 ;; re-raise the exception to print it to stderr
 (define (fail e)
@@ -43,8 +46,15 @@
    #:once-each
    [("-i" "--interactive") "Ask when disambiguation is needed"
                            (interactive-mode #t)]
+   #:once-any
+   [("-r" "--raco") "Find a raco command implementation"
+                    (raco-mode #t)]
    #:args (collection-path)
-   (let ([dirs (find-collection-dir collection-path)])
+   (let* ([collection-path*
+           (if (raco-mode)
+               (raco-name->collection-path collection-path)
+               collection-path)]
+          [dirs (find-collection-dir collection-path*)])
      (cond [(and (pair? dirs) (not (interactive-mode)))
             (displayln (path->string (first dirs)))]
            [else
