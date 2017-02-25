@@ -13,10 +13,14 @@
 ;; sets whether to search for a raco command
 (define raco-mode (make-parameter #f))
 
+;; sets whether to search for a package source
+(define source-mode (make-parameter #f))
+
 ;; print current directory (for use in scripts) and
 ;; re-raise the exception to print it to stderr
 (define (fail e)
-  (displayln (path->string (current-directory)))
+  (unless (source-mode)
+    (displayln (path->string (current-directory))))
   (raise e))
 
 ;; allow user to select the path option
@@ -49,29 +53,33 @@
    #:once-any
    [("-r" "--raco") "Find a raco command implementation"
                     (raco-mode #t)]
+   [("-s" "--source") "Find the source URL of a package"
+                      (source-mode #t)]
    #:args (collection-path)
-   (let* ([collection-path*
-           (if (raco-mode)
-               (raco-name->collection-path collection-path)
-               collection-path)]
-          [dirs (find-collection-dir collection-path*)])
-     (cond [(and (pair? dirs) (not (interactive-mode)))
-            (displayln (path->string (first dirs)))]
-           [else
-            (define pkg-path (pkg-directory collection-path))
-            (define pkg (and pkg-path (path->string pkg-path)))
-            (cond [(and pkg (not (interactive-mode)))
-                   (displayln pkg)]
-                  [(or pkg (pair? dirs))
-                   (define choices
-                     (remove-duplicates
-                      (append (map path->string dirs)
-                              (or (and pkg (list pkg)) null))))
-                   (if (= (length choices) 1)
-                       (displayln (car choices))
-                       (select choices))]
-                  [else
-                   (raise-user-error 'raco-find-collection
-                                     "could not find the collection path ~v"
-                                     collection-path)])]))))
+   (if (source-mode)
+     (displayln (find-source collection-path))
+     (let* ([collection-path*
+             (if (raco-mode)
+                 (raco-name->collection-path collection-path)
+                 collection-path)]
+            [dirs (find-collection-dir collection-path*)])
+       (cond [(and (pair? dirs) (not (interactive-mode)))
+              (displayln (path->string (first dirs)))]
+             [else
+              (define pkg-path (pkg-directory collection-path))
+              (define pkg (and pkg-path (path->string pkg-path)))
+              (cond [(and pkg (not (interactive-mode)))
+                     (displayln pkg)]
+                    [(or pkg (pair? dirs))
+                     (define choices
+                       (remove-duplicates
+                        (append (map path->string dirs)
+                                (or (and pkg (list pkg)) null))))
+                     (if (= (length choices) 1)
+                         (displayln (car choices))
+                         (select choices))]
+                    [else
+                     (raise-user-error 'raco-find-collection
+                                       "could not find the collection path ~v"
+                                       collection-path)])])))))
 
