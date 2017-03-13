@@ -1,10 +1,11 @@
 #lang racket/base
 
-(require racket/path pkg/path
+(require racket/path pkg/path pkg/lib
          setup/getinfo
          (submod compiler/commands/test paths))
 
 (provide find-collection-dir
+         find-source
          raco-name->collection-path)
 
 ;; Path-String -> (Listof Path)
@@ -36,6 +37,21 @@
                          (split-path file-path)])
              (list collection-base)))
       null))
+
+;; String -> String
+(define (find-source pkg-name)
+  (define (pkg-not-found e)
+    (raise-user-error 'raco-find-collection
+                      "could not find the package ~v"
+                      pkg-name))
+  (define (source-not-found)
+    (raise-user-error 'raco-find-collection
+                      "could not find source for package ~v"
+                      pkg-name))
+  (define details
+    (with-handlers ([exn:fail? pkg-not-found])
+      (get-pkg-details-from-catalogs pkg-name)))
+  (hash-ref details 'source source-not-found))
 
 (define cache (make-hash))
 
