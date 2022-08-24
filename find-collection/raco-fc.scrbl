@@ -46,3 +46,16 @@ current directory (for convenience in scripts that use cd).
 If you supply the @exec{-i} option, the tool will ask you to
 disambiguate when there are multiple matches by printing to
 standard error. Enter a numeric response to choose a match.
+
+
+@subsection{Find a Package's Source}
+@(define (pkgtech #:key [key #f] . args)
+   @tech[#:doc '(lib "pkg/scribblings/pkg.scrbl") #:key key args])
+
+The invocation
+@;
+@nested[#:style 'inset @exec{raco fc -s <pkg-name>}]
+@;
+consults the @pkgtech{package catalogs} for information about the given
+@pkgtech{package name} and prints the package's
+@pkgtech[#:key "package-source"]{source}.
